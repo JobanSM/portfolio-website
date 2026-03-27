@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobanpreet Mutti | Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Jobanpreet Mutti</a>
+            <nav aria-label="Primary navigation">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="experience.html">Experience</a></li>
+                    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+                    <li><a href="resume.html">Resume</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <section class="page-intro">
+            <p class="eyebrow">Portfolio</p>
+            <h1>Selected technical projects and research.</h1>
+            <p>
+                These projects span robotics, controls, experimentation, optics, and autonomous systems.
+            </p>
+        </section>
+
+        <section class="portfolio-grid">
+            <a class="project-card project-link project-card-expand" href="https://youtu.be/00laZGtpTdU?si=CJl6rkzdlECugDyD" target="_blank" rel="noreferrer">
+                <img class="project-image" src="full_car.jpeg" alt="Project preview for RoboJeep">
+                <div class="project-content">
+                    <h2>RoboJeep</h2>
+                    <div class="project-details">
+                        <p>RoboJeep was a UCSD MAE 148 final project focused on converting a prebuilt children's ride-on vehicle into a reusable ROS 2 electromechanical platform for future controls and autonomy projects.</p>
+                        <p>I designed and integrated 3D-printed custom mounts to secure the Jetson Nano, Arduinos, H-bridges, and sensors into the vehicle, helping turn the stock toy car into a more robust robotics testbed.</p>
+                        <p>I also constructed and launched a Dockerized ROS 2 workspace, integrated serial bridges to the Arduino controllers for real-time vehicle control and debugging, and supported closed-loop steering, skid-steer operation, and low-level drive command execution.</p>
+                        <p>On the sensing and validation side, I procured and integrated AS5600 magnetic encoders across all four drive motors, characterized encoder performance up to 9,600 RPM, and validated behavior by confirming the expected linear relationship between applied voltage and angular speed. I also helped incorporate a hardware fail-safe E-stop that disables the 5V enable signal to every motor driver for safer operation.</p>
+                    </div>
+                </div>
+            </a>
+
+            <a class="project-card project-link" href="#">
+                <img class="project-image" src="Pasted%20image.png" alt="Project preview for Instron Mechanical Testing">
+                <div class="project-content">
+                    <h2>Instron Mechanical Testing</h2>
+                    <p>Designed ASTM D638-compliant experiments and developed MATLAB-based data analysis pipelines to extract elastic moduli.</p>
+                </div>
+            </a>
+
+            <a class="project-card project-link" href="#">
+                <img class="project-image" src="Pasted%20image.png" alt="Project preview for Mini Autonomous Car">
+                <div class="project-content">
+                    <h2>Mini Autonomous Car</h2>
+                    <p>Integrated an OAK-D Lite camera and GNSS receiver into a perception pipeline using YOLOv8 models and PID position control.</p>
+                </div>
+            </a>
+
+            <a class="project-card project-link project-card-expand" href="Laser_102_Laser_Test_Manual.docx.pdf" target="_blank" rel="noreferrer">
+                <img class="project-image" src="laser_image.png" alt="Project preview for Laser Lab Research">
+                <div class="project-content">
+                    <h2>Laser Lab Research</h2>
+                    <div class="project-details">
+                        <p>In Laser Lab, I worked hands-on with solid-state laser systems, using a laser pump, HR and OC optics, and precision alignment methods to create and optimize a high-power laser resonant cavity.</p>
+                        <p>I aligned beams through an X-Y mirror setup, measured polarization ratios using polarizers and optical detectors, and performed beam profiling to evaluate diameter, divergence, and beam quality. I also operated Shimadzu spectrometers and oscilloscopes to capture spectral behavior, transmission properties, and pulse-related measurements across the optical setup.</p>
+                        <p>Beyond running the experiments, I documented factory-style test procedures for crystal spectrum scans, mirror spectrographs, resonant cavity alignment, power optimization, and beam collimation. That work required careful optical alignment, wavelength-based analysis of crystals and mirrors, and repeated adjustment of the HR and OC mirrors to maximize output power while maintaining safe lab operation.</p>
+                    </div>
+                </div>
+            </a>
+
+            <a class="project-card project-link" href="#">
+                <img class="project-image" src="Pasted%20image.png" alt="Project preview for Controls Coursework">
+                <div class="project-content">
+                    <h2>Controls Coursework</h2>
+                    <p>Designed full-state feedback controllers for an inverted pendulum and implemented a Luenberger observer to estimate unmeasured states.</p>
+                </div>
+            </a>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Jobanpreet Mutti</p>
+    </footer>
+</body>
+</html>
