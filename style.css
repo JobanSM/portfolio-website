@@ -217,7 +217,7 @@ a {
 
 .hero-stat-list div {
     padding: 1.15rem 1rem;
-    min-height: 7.5rem;
+    min-height: 5.0rem;
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.55);
     border: 1px solid rgba(31, 36, 48, 0.08);
