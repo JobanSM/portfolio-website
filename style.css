@@ -383,7 +383,7 @@ a {
 }
 
 .project-card-expand:hover .project-details {
-    max-height: 34rem;
+    max-height: 48rem;
 }
 
 .project-details p + p {
