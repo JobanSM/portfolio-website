@@ -37,7 +37,6 @@
                     <h2>RoboJeep</h2>
                     <div class="project-details">
                         <p>RoboJeep was a UCSD MAE 148 final project focused on converting a prebuilt children's ride-on vehicle into a reusable ROS 2 electromechanical platform for future controls and autonomy projects.</p>
-                        <p>I designed and integrated 3D-printed custom mounts to secure the Jetson Nano, Arduinos, H-bridges, and sensors into the vehicle, helping turn the stock toy car into a more robust robotics testbed.</p>
                         <p>I also constructed and launched a Dockerized ROS 2 workspace, integrated serial bridges to the Arduino controllers for real-time vehicle control and debugging, and supported closed-loop steering, skid-steer operation, and low-level drive command execution.</p>
                         <p>On the sensing and validation side, I procured and integrated AS5600 magnetic encoders across all four drive motors, characterized encoder performance up to 9,600 RPM, and validated behavior by confirming the expected linear relationship between applied voltage and angular speed. I also helped incorporate a hardware fail-safe E-stop that disables the 5V enable signal to every motor driver for safer operation.</p>
                     </div>
@@ -63,11 +62,24 @@
             <a class="project-card project-link project-card-expand" href="Laser.pdf" target="_blank" rel="noreferrer">
                 <img class="project-image" src="laser_image.png" alt="Project preview for Laser Lab Research">
                 <div class="project-content">
-                    <h2>Laser Lab Research</h2>
+                    <h2>Laser Systems Lab</h2>
                     <div class="project-details">
                         <p>In Laser Lab, I worked hands-on with solid-state laser systems, using a laser pump, HR and OC optics, and precision alignment methods to create and optimize a high-power laser resonant cavity.</p>
                         <p>I aligned beams through an X-Y mirror setup, measured polarization ratios using polarizers and optical detectors, and performed beam profiling to evaluate diameter, divergence, and beam quality. I also operated Shimadzu spectrometers and oscilloscopes to capture spectral behavior, transmission properties, and pulse-related measurements across the optical setup.</p>
                         <p>Beyond running the experiments, I documented factory-style test procedures for crystal spectrum scans, mirror spectrographs, resonant cavity alignment, power optimization, and beam collimation. That work required careful optical alignment, wavelength-based analysis of crystals and mirrors, and repeated adjustment of the HR and OC mirrors to maximize output power while maintaining safe lab operation.</p>
+                    </div>
+                </div>
+            </a>
+
+            <a class="project-card project-link project-card-expand" href="https://drive.google.com/file/d/1XoF7mYHcFBwHeTWI1AUr1x_V7Nx3rNLj/view?usp=drive_link" target="_blank" rel="noreferrer">
+                <img class="project-image" src="bot.png" alt="Project preview for youBot mobile manipulation control">
+                <div class="project-content">
+                    <h2>youBot Mobile Manipulation Control</h2>
+                    <div class="project-details">
+                        <p>For my MAE 204 final project, I developed a control and simulation pipeline for the KUKA youBot to autonomously pick up a cube and move it to a target pose using coordinated chassis-and-arm motion.</p>
+                        <p>The project separated the task into state prediction, trajectory generation, and feedback control. I used ScrewTrajectory to generate smooth eight-segment reference motion, then implemented a feedforward plus feedback controller that combined proportional and integral error correction to track the desired end-effector path.</p>
+                        <p>To convert commanded end-effector twists into robot motion, I used the pseudoinverse of the mobile manipulator Jacobian to distribute responsibility across the four Mecanum wheels and five arm joints. I also enforced actuator velocity limits in the simulation through first-order Euler integration and command saturation so the system behaved more like a physically realizable robot instead of an unconstrained mathematical model.</p>
+                        <p>I evaluated best-case, overshoot, and new-task scenarios, compared tracking behavior through Xerr plots, and analyzed how controller gains, singularity proximity, and joint speed limits affected performance. The linked video shows the best-case execution of the task.</p>
                     </div>
                 </div>
             </a>
