@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jobanpreet Mutti | ME 136 Flight Controls and State Estimation</title>
+    <title>Jobanpreet Mutti | Flight Controls and State Estimation</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,130 +23,258 @@
 
     <main class="page-shell">
         <section class="page-intro">
-            <p class="eyebrow">ME 136</p>
-            <h1>Flight controls, estimation, and hover logic built from first principles.</h1>
+            <p class="eyebrow">Flight Controls</p>
+            <h1>Embedded controls, state estimation, and hover logic built from first principles.</h1>
             <p>
-                ME 136 became a full-stack controls project for me: I moved from direct quadrotor motor actuation and sensor
-                inspection into estimation, control allocation, and autonomous hover behavior using real onboard measurements.
+                This project arc began with direct quadrotor motor actuation and raw IMU inspection, then grew into a full
+                estimation-and-control stack: actuator calibration, complementary-filter attitude estimation, control allocation,
+                height and horizontal-velocity estimation, and stable hover tuning.
             </p>
         </section>
 
         <section class="feature-panel">
             <div class="feature-visual-card">
-                <img class="feature-image" src="ME%20136/ME136_Lab_5/ME136Lab5HoverScreenshot.png" alt="ME 136 quadrotor hover screenshot">
+                <img class="feature-image" src="ME%20136/ME136_Lab_5/ME136Lab5HoverScreenshot.png" alt="Quadrotor hover simulation screenshot">
             </div>
             <div class="feature-text-card">
-                <p class="card-label">Why It Matters</p>
-                <h2>A recruiter-ready view of the full lab arc.</h2>
+                <p class="card-label">Project Scope</p>
+                <h2>A complete controls story, not just isolated lab deliverables.</h2>
                 <p>
-                    Rather than treating each lab as an isolated exercise, this page frames the course as one continuous controls
-                    and embedded-systems build. The work progressed from actuator command generation to sensor-based estimation,
-                    then into closed-loop attitude control and hover stabilization using fused measurements from the IMU, height
-                    sensor, and optical-flow sensor.
+                    The work evolved from low-level motor commands into a structured flight-control pipeline that combined embedded
+                    C++, rigid-body dynamics, sensor fusion, control tuning, and MATLAB-based validation. By the end, the vehicle
+                    could estimate its orientation, altitude, and horizontal motion and use those states to stabilize hover in a
+                    noisy simulated environment.
                 </p>
                 <p>
-                    Along the way, I wrote embedded C++ control logic, used MATLAB to analyze logged telemetry, tuned time
-                    constants and controller gains, and validated how estimation and control performance changed across experiments.
+                    The most important part of this project was not any single lab task. It was understanding how modeling,
+                    estimation, and control depend on one another in a real flight loop, and then using that understanding to tune
+                    a system that actually behaves better in practice.
                 </p>
+            </div>
+        </section>
+
+        <section class="story-section">
+            <div class="section-heading">
+                <p class="eyebrow">System Foundations</p>
+                <h2>From raw actuation to physically meaningful motor models</h2>
+            </div>
+            <div class="text-card story-card">
+                <p>
+                    The first step was understanding the quadrotor at the actuator and sensor level. I started by directly driving
+                    all four motors from the embedded flight loop and observing how the IMU responded with the motors on, off, and
+                    while the vehicle was manually rotated. That gave me a practical feel for sensor noise, axis conventions, and
+                    the difference between a stationary reading, vibration-induced noise, and deliberate motion.
+                </p>
+                <p>
+                    I then moved from raw motor commands to a speed-based actuation model. Using measured data, I treated PWM as a
+                    control input and identified a linear relationship between commanded PWM and rotor angular speed. From there,
+                    thrust modeling followed the expected quadratic relationship with angular velocity, matching the standard
+                    propeller-force form <code>T = C_T \rho \Omega^2</code>. That calibration step was important because it
+                    connected the software command layer to physically interpretable rotor behavior instead of arbitrary motor
+                    numbers.
+                </p>
+                <p>
+                    This stage of the project taught me how to translate between signals, models, and hardware behavior: PWM into
+                    rotor speed, rotor speed into thrust, and thrust into vehicle response. It also created the foundation for the
+                    later control-allocation and mixer work, because once each propeller command corresponded to meaningful force,
+                    the rest of the controller could be expressed in dynamics rather than guesswork.
+                </p>
+            </div>
+            <div class="figure-grid">
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_1/me136lab1q3aMotorsOn.png" alt="Gyroscope response with motors on">
+                    <figcaption>Motor-on sensor behavior highlighted how vibration and actuation noise show up in the IMU measurements.</figcaption>
+                </figure>
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_2/PTVSOMEGA.png" alt="Propeller thrust versus angular velocity plot">
+                    <figcaption>Measured thrust-versus-speed data reinforced the quadratic propeller-force relationship used in the control logic.</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="story-section">
+            <div class="section-heading">
+                <p class="eyebrow">Attitude Estimation</p>
+                <h2>Using gyroscope integration and accelerometer correction together</h2>
+            </div>
+            <div class="text-card story-card">
+                <p>
+                    Once the low-level actuation and IMU behavior were understood, I built orientation estimation for roll, pitch,
+                    and yaw. The gyroscope alone provides angular rate, so attitude can be estimated by integration, but the
+                    estimate drifts over time because bias and noise accumulate. To reduce that drift, I used accelerometer-based
+                    roll and pitch measurements as a slow corrective reference while preserving the gyroscope's ability to capture
+                    fast motion.
+                </p>
+                <p>
+                    In practice, this became a complementary filter. The estimator used the standard form of combining integrated
+                    gyro attitude with accelerometer-derived attitude using a mixing factor <code>\rho</code>. A smaller
+                    <code>\rho</code> trusts the gyroscope more and corrects slowly; a larger <code>\rho</code> trusts the
+                    accelerometer more and responds more like a noisy step measurement. By testing multiple values, I learned how
+                    estimator tuning changes the tradeoff between drift rejection and measurement noise sensitivity.
+                </p>
+                <p>
+                    The theory mattered because the estimator is what the controller sees as the vehicle state. If the state is
+                    wrong, the controller is reacting to fiction. This stage made the link between estimation and control very
+                    tangible: bias calibration, sensor fusion, and discrete-time update logic all directly affected how well the
+                    later control loops behaved.
+                </p>
+            </div>
+            <div class="figure-grid">
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_3/extracreditnew.png" alt="Pitch data versus time for different rho values">
+                    <figcaption>Varying the complementary-filter mixing parameter showed the practical tradeoff between drift correction and noisy measurement injection.</figcaption>
+                </figure>
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_3/deliverable%205%203%20graphs.png" alt="Roll pitch and yaw estimator plot">
+                    <figcaption>The full three-angle estimator demonstrated that the fused state could return near zero after repeated motion without runaway drift.</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="story-section">
+            <div class="section-heading">
+                <p class="eyebrow">Attitude Control</p>
+                <h2>Closing the loop with cascaded rate logic and control allocation</h2>
+            </div>
+            <div class="text-card story-card">
+                <p>
+                    After building attitude estimation, I implemented closed-loop control for roll, pitch, and yaw. The structure
+                    was effectively a cascaded controller: attitude error produced desired body rates, and the measured body rates
+                    then fed a faster rate loop that generated commanded angular accelerations. Those desired rotational dynamics
+                    were converted into body moments using the vehicle inertias.
+                </p>
+                <p>
+                    The next key step was control allocation through the mixer matrix. Total thrust and the desired moments about
+                    the body axes were distributed across the four propellers using the geometry of the quadrotor arm length
+                    <code>l</code> and the yaw-coupling coefficient <code>k</code>. This is where the earlier thrust modeling
+                    became essential: the controller did not simply produce “motor numbers,” it produced desired forces and torques
+                    that were then mapped into motor commands through a physically motivated transformation.
+                </p>
+                <p>
+                    I also evaluated intentionally unstable and low-thrust cases, which was valuable because it exposed how time
+                    constants, available authority, and over-aggressive corrections change system behavior. Those tests made the
+                    stability margins feel real: if the controller is tuned too aggressively or the available thrust is limited,
+                    the resulting pitch response becomes choppy, delayed, or outright unstable.
+                </p>
+            </div>
+            <div class="figure-grid">
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_4_Active/MMI.png" alt="Mixer matrix implementation screenshot">
+                    <figcaption>The mixer matrix translated desired thrust and moments into individual rotor commands, connecting rigid-body control objectives to actuator-level outputs.</figcaption>
+                </figure>
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_4_Active/ME136Lab4Q6c.png" alt="Motor command values versus time">
+                    <figcaption>Logging motor commands alongside pitch response helped show how control effort changed as the system moved between stable and low-thrust conditions.</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="story-section">
+            <div class="section-heading">
+                <p class="eyebrow">Hover Logic</p>
+                <h2>Estimating height and planar motion before trying to hold position</h2>
+            </div>
+            <div class="text-card story-card">
+                <p>
+                    Stable hover required more than attitude control. The vehicle also needed usable estimates of altitude,
+                    vertical velocity, and horizontal velocity. For altitude, I used the range sensor but corrected the raw height
+                    reading by dividing through the attitude-dependent geometry term <code>\cos(\phi)\cos(\theta)</code>, since a
+                    tilted vehicle sees a different slant distance than a level one. Height and vertical velocity were then blended
+                    in a predictor-corrector style update using a measurement mixing factor.
+                </p>
+                <p>
+                    For horizontal motion, I used optical-flow measurements together with gyroscope compensation and the current
+                    height estimate. The core idea was that image motion alone is not pure translation; part of it is caused by
+                    body rotation. By subtracting out the rotational contribution and scaling by the estimated height, I could turn
+                    optical-flow readings into horizontal velocity estimates in the vehicle frame.
+                </p>
+                <p>
+                    With those states in hand, the controller added two more layers: horizontal damping and vertical height
+                    control. Horizontal velocity was driven toward zero using a time-constant-based acceleration command that then
+                    mapped into desired roll and pitch. Altitude control used a second-order target with natural frequency and
+                    damping ratio, turning height error and vertical velocity into a desired vertical acceleration. That desired
+                    acceleration fed back into the same thrust-and-moment framework from the attitude controller.
+                </p>
+                <p>
+                    In other words, the final hover logic was not a special-case script. It was the result of layering translation
+                    estimation and outer-loop commands on top of an already working attitude-control architecture.
+                </p>
+            </div>
+            <div class="figure-grid">
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q4bii.jpg" alt="Optical flow sensor data versus time">
+                    <figcaption>Optical-flow measurements became useful horizontal-velocity estimates only after compensating for body rotation and scaling by height.</figcaption>
+                </figure>
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q3biii.png" alt="Estimated height versus time">
+                    <figcaption>Range-sensor height had to be attitude-corrected before it could support a meaningful vertical estimator and hover controller.</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="story-section">
+            <div class="section-heading">
+                <p class="eyebrow">Validation and Tuning</p>
+                <h2>Using telemetry and iterative tuning to extend stable flight</h2>
+            </div>
+            <div class="text-card story-card">
+                <p>
+                    The final phase of the project was tuning and validation. I used MATLAB to analyze logged telemetry for
+                    desired and estimated angles, height, velocities, and total motor force, then iteratively adjusted time
+                    constants and estimator mixing values. This was especially important in hover, where a mathematically valid
+                    controller can still oscillate badly if the gains are too reactive or the state estimates are too noisy.
+                </p>
+                <p>
+                    The tuning process was closer to engineering practice than to a purely symbolic exercise. Small changes in the
+                    rate and angle time constants altered how aggressively the vehicle corrected attitude. The mixing parameters for
+                    height and horizontal velocity changed how much the controller trusted its measured states. In the final hover
+                    tests, those adjustments noticeably improved flight duration and reduced the aggressive overcorrection that had
+                    previously driven the vehicle into the walls.
+                </p>
+                <p>
+                    The biggest lesson from this project was that a flight-control system only works when modeling, estimation,
+                    actuation, and tuning all agree with one another. A controller is only as good as the states it receives, and
+                    state estimates are only useful if they are interpreted through the actual vehicle geometry and sensor physics.
+                </p>
+            </div>
+            <div class="figure-grid">
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q5bi.png" alt="Estimated and desired angles versus time">
+                    <figcaption>Desired-versus-estimated angle tracking made it possible to see whether the outer hover logic and inner attitude loop were working together.</figcaption>
+                </figure>
+                <figure class="inline-figure">
+                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q5biii.png" alt="Estimated height versus desired height">
+                    <figcaption>Height tracking showed whether the vertical second-order control law and the estimator were producing usable hover behavior near the target altitude.</figcaption>
+                </figure>
             </div>
         </section>
 
         <section class="content-section">
             <div class="section-heading">
-                <p class="eyebrow">Technical Summary</p>
-                <h2>What I learned and implemented across the lab sequence</h2>
+                <p class="eyebrow">Supporting Documents</p>
+                <h2>Reports, code listings, and analysis files</h2>
             </div>
-            <div class="text-card">
+            <div class="text-card story-card">
                 <p>
-                    In the first labs, I worked directly with the quadrotor's motor commands and IMU signals, using embedded C++
-                    to command all four motors and inspect accelerometer and gyro measurements. That groundwork established a
-                    practical understanding of how low-level inputs, raw measurements, and telemetry outputs interacted inside the
-                    real-time flight loop.
+                    The documents below support the full development arc shown on this page. The embedded code PDFs capture the
+                    flight-loop implementation as the estimator and controller evolved, while the MATLAB files document how I
+                    processed telemetry, plotted responses, and evaluated estimator and control performance during tuning.
                 </p>
-                <p>
-                    I then moved into actuator modeling by replacing direct motor commands with a speed-based interface using the
-                    provided conversion utilities. From there, the course shifted into estimation: I implemented roll, pitch, and
-                    yaw estimation by correcting gyroscope drift with a complementary-filter structure that blended integrated rate
-                    gyro data with accelerometer-based attitude measurements.
-                </p>
-                <p>
-                    Once attitude estimation was in place, I developed a closed-loop attitude controller for the quadrotor. That
-                    work included computing desired body rates from attitude error, shaping rate dynamics with time constants, and
-                    using a mixer matrix to translate total thrust and desired torques into four motor force commands. This tied
-                    together rigid-body dynamics, controller design, and embedded implementation.
-                </p>
-                <p>
-                    The later labs extended the stack into position-related estimation and hover behavior. I estimated height and
-                    vertical velocity from the range sensor while correcting for vehicle attitude, then used optical-flow data with
-                    gyroscope compensation to estimate horizontal velocity. With those states available, I implemented horizontal
-                    damping logic, vertical second-order height control, and the corresponding roll, pitch, and thrust commands
-                    needed to maintain stable hover near a desired altitude.
-                </p>
-                <p>
-                    Throughout the sequence, I used MATLAB to process logged telemetry, plot estimated states and commands over
-                    time, compare desired versus measured behavior, and evaluate how tuning parameters affected stability, damping,
-                    and overall flight response. The result was a course-long progression through embedded controls, sensor fusion,
-                    dynamic modeling, and experimental validation on a quadrotor platform.
-                </p>
-            </div>
-        </section>
-
-        <section class="content-section">
-            <div class="section-heading">
-                <p class="eyebrow">Lab Progression</p>
-                <h2>From raw commands to closed-loop hover</h2>
-            </div>
-            <div class="resource-grid">
-                <article class="resource-card">
-                    <p class="resource-kicker">Lab 1</p>
-                    <h3>Motor actuation and IMU inspection</h3>
-                    <p>Commanded all four motors together and inspected accelerometer and rate gyroscope outputs to understand the quadrotor's sensing and actuation loop.</p>
-                    <div class="resource-links">
-                        <a href="ME%20136/ME136_Lab_1/usercode.pdf" target="_blank" rel="noreferrer">User code PDF</a>
-                    </div>
-                </article>
-
-                <article class="resource-card">
-                    <p class="resource-kicker">Lab 2</p>
-                    <h3>Speed-based motor commands</h3>
-                    <p>Replaced raw motor commands with speed-based control using conversion functions, linking software commands more directly to physical rotor behavior.</p>
-                    <div class="resource-links">
-                        <a href="ME%20136/ME136_Lab_2/Lab2Usercode.pdf" target="_blank" rel="noreferrer">User code PDF</a>
-                        <a href="ME%20136/ME136_Lab_2/me136lab2matlabcode.pdf" target="_blank" rel="noreferrer">MATLAB analysis</a>
-                    </div>
-                </article>
-
-                <article class="resource-card">
-                    <p class="resource-kicker">Lab 3</p>
-                    <h3>Orientation estimation</h3>
-                    <p>Built roll, pitch, and yaw estimation with complementary filtering, using accelerometer corrections to reduce gyro drift and validate attitude behavior through logged data.</p>
-                    <div class="resource-links">
-                        <a href="ME%20136/ME136_Lab_3/Lab3.pdf" target="_blank" rel="noreferrer">Analysis report</a>
-                        <a href="ME%20136/ME136_Lab_3/Lab3UserCode.pdf" target="_blank" rel="noreferrer">User code PDF</a>
-                    </div>
-                </article>
-
-                <article class="resource-card">
-                    <p class="resource-kicker">Lab 4</p>
-                    <h3>Attitude control and mixer implementation</h3>
-                    <p>Designed a closed-loop roll, pitch, and yaw controller, computed commanded angular accelerations, and implemented a mixer matrix to distribute torques and thrust across all four motors.</p>
-                    <div class="resource-links">
-                        <a href="ME%20136/ME136_Lab_4_Active/Lab4UserCode.pdf" target="_blank" rel="noreferrer">User code PDF</a>
-                        <a href="ME%20136/ME136_Lab_4_Active/Lab4MatlabCode.pdf" target="_blank" rel="noreferrer">MATLAB analysis</a>
-                        <a href="ME%20136/ME136_Lab_4_Active/Lab4UtilityCode.pdf" target="_blank" rel="noreferrer">Utility code</a>
-                    </div>
-                </article>
-
-                <article class="resource-card">
-                    <p class="resource-kicker">Lab 5</p>
-                    <h3>Height, optical flow, and hover control</h3>
-                    <p>Estimated height, vertical velocity, and horizontal velocity from range and optical-flow sensors, then used those estimates to stabilize altitude and damp horizontal motion during hover.</p>
-                    <div class="resource-links">
-                        <a href="ME%20136/ME136_Lab_5/ME136_Lab5_UserCode.pdf" target="_blank" rel="noreferrer">User code PDF</a>
-                        <a href="ME%20136/ME136_Lab_5/Lab5MatlabCode.pdf" target="_blank" rel="noreferrer">MATLAB analysis</a>
-                        <a href="ME%20136/ME136_Lab_5/Lab4UtilityCode.pdf" target="_blank" rel="noreferrer">Utility code</a>
-                    </div>
-                </article>
+                <h3 class="subsection-title">Embedded C++ Code</h3>
+                <div class="resource-links">
+                    <a href="ME%20136/ME136_Lab_1/usercode.pdf" target="_blank" rel="noreferrer">Lab 1 code</a>
+                    <a href="ME%20136/ME136_Lab_2/Lab2Usercode.pdf" target="_blank" rel="noreferrer">Lab 2 code</a>
+                    <a href="ME%20136/ME136_Lab_3/Lab3UserCode.pdf" target="_blank" rel="noreferrer">Lab 3 code</a>
+                    <a href="ME%20136/ME136_Lab_4_Active/Lab4UserCode.pdf" target="_blank" rel="noreferrer">Lab 4 code</a>
+                    <a href="ME%20136/ME136_Lab_5/ME136_Lab5_UserCode.pdf" target="_blank" rel="noreferrer">Lab 5 code</a>
+                </div>
+                <h3 class="subsection-title">MATLAB and Analysis Files</h3>
+                <div class="resource-links">
+                    <a href="ME%20136/ME136_Lab_2/me136lab2matlabcode.pdf" target="_blank" rel="noreferrer">Lab 2 analysis</a>
+                    <a href="ME%20136/ME136_Lab_3/Lab3.pdf" target="_blank" rel="noreferrer">Lab 3 analysis</a>
+                    <a href="ME%20136/ME136_Lab_4_Active/Lab4MatlabCode.pdf" target="_blank" rel="noreferrer">Lab 4 analysis</a>
+                    <a href="ME%20136/ME136_Lab_5/Lab5MatlabCode.pdf" target="_blank" rel="noreferrer">Lab 5 analysis</a>
+                </div>
             </div>
         </section>
     </main>
