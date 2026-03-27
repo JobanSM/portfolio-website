@@ -403,6 +403,103 @@ a {
     padding: 1rem;
 }
 
+.feature-panel {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: minmax(300px, 1.05fr) minmax(0, 1.15fr);
+    gap: 1.2rem;
+}
+
+.feature-visual-card,
+.feature-text-card,
+.resource-card {
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+}
+
+.feature-visual-card {
+    padding: 1rem;
+}
+
+.feature-image {
+    width: 100%;
+    height: 100%;
+    min-height: 20rem;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
+    background: #dbe4eb;
+}
+
+.feature-text-card {
+    padding: 2rem;
+}
+
+.feature-text-card h2 {
+    font-size: 2rem;
+    line-height: 1.08;
+    margin: 0.65rem 0 1rem;
+}
+
+.feature-text-card p + p {
+    margin-top: 1rem;
+}
+
+.resource-grid {
+    margin-top: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2rem;
+}
+
+.resource-card {
+    padding: 1.6rem;
+}
+
+.resource-kicker {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+}
+
+.resource-card h3 {
+    font-size: 1.4rem;
+    line-height: 1.15;
+    margin: 0.55rem 0 0.75rem;
+}
+
+.resource-card p {
+    color: var(--muted);
+}
+
+.resource-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.15rem;
+}
+
+.resource-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(31, 79, 120, 0.08);
+    border: 1px solid rgba(31, 79, 120, 0.11);
+}
+
+.resource-links a:hover {
+    background: rgba(31, 79, 120, 0.14);
+}
+
 .resume-frame {
     width: 100%;
     min-height: 78vh;
@@ -430,7 +527,9 @@ a {
 
 @media (max-width: 900px) {
     .hero-panel,
-    .portfolio-grid {
+    .portfolio-grid,
+    .feature-panel,
+    .resource-grid {
         grid-template-columns: 1fr;
     }
 
