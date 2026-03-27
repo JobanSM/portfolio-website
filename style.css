@@ -216,7 +216,8 @@ a {
 }
 
 .hero-stat-list div {
-    padding: 1rem;
+    padding: 1.15rem 1rem;
+    min-height: 6.5rem;
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.55);
     border: 1px solid rgba(31, 36, 48, 0.08);
@@ -224,13 +225,15 @@ a {
 
 .stat-number {
     display: block;
-    font-size: 1rem;
+    font-size: 1.02rem;
     font-weight: 700;
     color: var(--ink);
+    line-height: 1.25;
 }
 
 .stat-label {
     display: block;
+    margin-top: 0.35rem;
     font-size: 0.9rem;
     color: var(--muted);
 }
