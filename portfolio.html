@@ -61,7 +61,7 @@
                 <div class="project-content">
                     <h2>UR3e Inverse Kinematics and Task Planning</h2>
                     <div class="project-details">
-                        <p>We programmed a UR3e robot arm to autonomously assemble a multi-part figure by solving inverse kinematics for every waypoint in the task sequence. The IK solver was built from scratch using an iterative Newton's method approach on the space Jacobian, rather than a closed-form solution, with screw axes and SE(3) coordinate transforms defining the robot's geometry.</p>
+                        <p>I programmed a UR3e robot arm to autonomously assemble a multi-part figure by solving inverse kinematics for every waypoint in the task sequence. The IK solver used the iterative Newton's method approach on the space Jacobian, rather than a closed-form solution, with screw axes and SE(3) coordinate transforms defining the robot's geometry.</p>
                         <p>Waypoints were defined as full SE(3) target poses with gripper state, and intermediate staging waypoints at a fixed Z height were introduced to guarantee collision-free transitions between pick and place locations. Every waypoint converged within 20 iterations, and the full sequence was uploaded to the physical robot via a Python script and executed successfully.</p>
                     </div>
                 </div>
