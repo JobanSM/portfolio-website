@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobanpreet Mutti | Controls Coursework</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Jobanpreet Mutti</a>
+            <nav aria-label="Primary navigation">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="experience.html">Experience</a></li>
+                    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+                    <li><a href="resume.html">Resume</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <section class="page-intro">
+            <p class="eyebrow"><a href="portfolio.html">Portfolio</a> &rsaquo; Controls Coursework</p>
+            <h1>Controls Coursework</h1>
+            <p>
+                A collection of control systems projects from my coursework. Each section covers the theory, design process, and hardware results for a different system. I will expand this page over time as I complete more work.
+            </p>
+        </section>
+
+        <div class="course-sections">
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 INVERTED PENDULUM
+            ═══════════════════════════════════════════════════════════ -->
+            <details class="course-section" open>
+                <summary>
+                    <span>Inverted Pendulum: Full State Feedback and Luenberger Observer</span>
+                </summary>
+                <div class="course-section-body">
+
+                    <p class="course-intro-text">
+                        The inverted pendulum on a cart is a canonical problem in control theory because it is open-loop unstable, nonlinear, and underactuated: one motor drives the cart, but the system has two degrees of freedom. The goal was to keep the pendulum balanced upright while commanding the cart to track a position reference. I designed a full state feedback controller through pole placement, deployed it on physical hardware, and then replaced the differentiation-based velocity estimates with a Luenberger observer to improve noise robustness.
+                    </p>
+
+                    <a class="course-video-link" href="https://drive.google.com/file/d/1B-WVJoHYByL-YEHKXkV_KxiFaJQDfcd2/view?usp=sharing" target="_blank" rel="noreferrer">
+                        Watch the inverted pendulum running on hardware &rarr;
+                    </a>
+
+                    <!-- ─── SECTION 1: SYSTEM DYNAMICS ─── -->
+                    <h3 class="subsection-h3">System Dynamics</h3>
+                    <p>
+                        The cart has mass M and can only move horizontally. The pendulum is a uniform rod of mass m and half-length L<sub>p</sub>, pinned to the top of the cart. Applying Newton's laws in the horizontal direction for the cart and taking moments about the pin joint for the pendulum, then linearizing around the upright equilibrium (&theta; = 0, &theta;&#775; = 0), gives two coupled differential equations:
+                    </p>
+                    <div class="equation-block">
+                        F<sub>a</sub> = (M + m) ẍ + mL<sub>p</sub> &theta;&#776;<br><br>
+                        0 = mL<sub>p</sub> ẍ + (4mL<sub>p</sub>² / 3) &theta;&#776; + mgL<sub>p</sub> &theta;
+                    </div>
+                    <p>
+                        The applied force F<sub>a</sub> comes from the DC motor driving the cart. Its dynamics were characterized in a prior lab and expressed as a linear function of the input voltage, cart velocity, and cart position, which I substituted in to get the complete system model.
+                    </p>
+
+                    <!-- ─── SECTION 2: STATE SPACE ─── -->
+                    <h3 class="subsection-h3">State Space Representation</h3>
+                    <p>
+                        I chose the four-dimensional state vector <strong>x</strong> = [x, ẋ, &theta;, &theta;&#775;]<sup>T</sup>, where x is cart position, ẋ is cart velocity, &theta; is pendulum angle from vertical, and &theta;&#775; is the angular rate. Rewriting the equations in first-order form gives the standard linear system:
+                    </p>
+                    <div class="equation-block">
+                        ẋ = A<strong>x</strong> + Bu<br>
+                        y = C<strong>x</strong>
+                    </div>
+                    <p>
+                        The A matrix captures the open-loop coupling between cart and pendulum. The B matrix maps the scalar motor input to the state derivatives. The output matrix C is 2&times;4, selecting cart position and pendulum angle as the two measured outputs.
+                    </p>
+                    <p>
+                        I computed the eigenvalues of A to assess open-loop stability:
+                    </p>
+                    <div class="stat-row">
+                        <div class="stat-pill">
+                            <span class="pill-number">0</span>
+                            <span class="pill-label">eigenvalue 1</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">-7.55</span>
+                            <span class="pill-label">eigenvalue 2</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">-4.129</span>
+                            <span class="pill-label">eigenvalue 3</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">+4.87</span>
+                            <span class="pill-label">eigenvalue 4 (unstable)</span>
+                        </div>
+                    </div>
+                    <p>
+                        The positive eigenvalue at +4.87 confirms the system is open-loop unstable. Without feedback, any small perturbation from the upright position causes the pendulum to diverge exponentially. I also verified that the controllability and observability matrices each have rank 4, meaning the system is both fully controllable and fully observable, which is a prerequisite for both pole placement and observer design.
+                    </p>
+
+                    <!-- Simulation: step response -->
+                    <div class="figure-grid" style="grid-template-columns: 1fr;">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-step-response.png" alt="Cart position and pendulum angle response to a voltage step input">
+                            <p class="figure-caption">Open-loop cart position (top) and pendulum angle (bottom) in simulation for a voltage step input. The angle diverges, consistent with the unstable eigenvalue.</p>
+                        </div>
+                    </div>
+
+                    <!-- ─── SECTION 3: POLE PLACEMENT ─── -->
+                    <h3 class="subsection-h3">Pole Placement and Gain Matrix</h3>
+                    <p>
+                        Full state feedback closes the loop by setting the motor input u = r &minus; K<strong>x</strong>, where r is the reference input and K is a 1&times;4 gain row vector. The closed-loop system matrix becomes A<sub>K</sub> = A &minus; BK, and its eigenvalues are placed anywhere in the left half plane by choosing K appropriately.
+                    </p>
+                    <p>
+                        I computed the closed-loop characteristic polynomial as a function of the four gains k<sub>1</sub> through k<sub>4</sub> and matched its coefficients to a desired characteristic polynomial corresponding to a chosen set of stable closed-loop poles. Solving the resulting system of linear equations and verifying with MATLAB's <code>place()</code> function gave:
+                    </p>
+                    <div class="stat-row">
+                        <div class="stat-pill">
+                            <span class="pill-number">k<sub>1</sub> = &minus;13.028</span>
+                            <span class="pill-label">cart position gain</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">k<sub>2</sub> = &minus;14.78</span>
+                            <span class="pill-label">cart velocity gain</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">k<sub>3</sub> = &minus;48.16</span>
+                            <span class="pill-label">pendulum angle gain</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">k<sub>4</sub> = &minus;6.62</span>
+                            <span class="pill-label">angular rate gain</span>
+                        </div>
+                    </div>
+                    <p>
+                        The characteristic polynomial of the desired closed-loop system is:
+                    </p>
+                    <div class="equation-block">
+                        s<sup>4</sup> + 7.20s<sup>3</sup> + 121.05s<sup>2</sup> + 349.80s + 442.00
+                    </div>
+
+                    <!-- Simulation: unit step and sine wave -->
+                    <div class="figure-grid" style="grid-template-columns: 1fr;">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-unit-step-response.png" alt="Closed-loop step response of cart position">
+                            <p class="figure-caption">Simulated closed-loop step response of cart position to a 1 V reference input. The position converges smoothly to the commanded value.</p>
+                        </div>
+                    </div>
+                    <p>
+                        I also simulated the tracking behavior under sinusoidal position references at 1, 2, and 5 rad/s, computing the ratio of output amplitude to input amplitude at each frequency:
+                    </p>
+                    <div class="stat-row">
+                        <div class="stat-pill">
+                            <span class="pill-number">0.43</span>
+                            <span class="pill-label">simulated gain at 1 rad/s</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">0.30</span>
+                            <span class="pill-label">simulated gain at 2 rad/s</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">0.053</span>
+                            <span class="pill-label">simulated gain at 5 rad/s</span>
+                        </div>
+                    </div>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-sim-1rad.png" alt="Simulated cart position tracking a 1 rad/s sine wave">
+                            <p class="figure-caption">Simulation: cart tracking a 1 rad/s sine wave reference. Gain = 0.43.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-sim-2rad.png" alt="Simulated cart position tracking a 2 rad/s sine wave">
+                            <p class="figure-caption">Simulation: 2 rad/s. Gain drops to 0.30 as frequency increases.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-sim-5rad.png" alt="Simulated cart position tracking a 5 rad/s sine wave">
+                            <p class="figure-caption">Simulation: 5 rad/s. Gain is 0.053, showing significant attenuation.</p>
+                        </div>
+                    </div>
+
+                    <!-- ─── SECTION 4: HARDWARE ─── -->
+                    <h3 class="subsection-h3">Hardware Implementation</h3>
+                    <p>
+                        I implemented the controller in Simulink with hardware-in-the-loop, using the physical cart-pendulum system with encoder measurements. The block diagram connected the gain matrix K to the real-time state measurements coming off the hardware encoders.
+                    </p>
+                    <div class="figure-grid" style="grid-template-columns: 1fr;">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-simulink-model.png" alt="Simulink hardware model of the full state feedback controller">
+                            <p class="figure-caption">Simulink hardware model of the state feedback controller connected to the physical cart-pendulum system.</p>
+                        </div>
+                    </div>
+                    <p>
+                        When connected with the pendulum in the upright position and given manual perturbations, the controller responded by driving the cart in the direction of the perturbation, counteracting the angular deviation and restoring the upright equilibrium. The pendulum remained stable through repeated pushes.
+                    </p>
+                    <div class="figure-grid" style="grid-template-columns: 1fr;">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-hw-perturbation.png" alt="Cart position and pendulum angle with manual perturbations on hardware">
+                            <p class="figure-caption">Hardware response to two manual perturbations. The spikes in pendulum angle show each push; the controller recovers quickly each time.</p>
+                        </div>
+                    </div>
+
+                    <p>
+                        I tested the hardware controller against sinusoidal position references at the same three frequencies. The measured gains were consistently larger than the simulated ones, likely because the physical actuators and friction introduce dynamics not captured in the linear model:
+                    </p>
+                    <div class="stat-row">
+                        <div class="stat-pill">
+                            <span class="pill-number">1.89</span>
+                            <span class="pill-label">hardware gain at 1 rad/s</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">1.21</span>
+                            <span class="pill-label">hardware gain at 2 rad/s</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">0.40</span>
+                            <span class="pill-label">hardware gain at 5 rad/s</span>
+                        </div>
+                    </div>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-hw-1rad-cart.png" alt="Hardware cart position tracking 1 rad/s sine wave">
+                            <p class="figure-caption">Hardware: cart position at 1 rad/s. Hardware gain (1.89) is much larger than the simulated prediction (0.43).</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-hw-2rad-cart.png" alt="Hardware cart position tracking 2 rad/s sine wave">
+                            <p class="figure-caption">Hardware: cart position at 2 rad/s. Gain = 1.21 vs. simulated 0.30.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-hw-5rad-cart.png" alt="Hardware cart position tracking 5 rad/s sine wave">
+                            <p class="figure-caption">Hardware: cart position at 5 rad/s. Gain = 0.40 vs. simulated 0.053.</p>
+                        </div>
+                    </div>
+
+                    <!-- ─── SECTION 5: DIFFERENTIATION PROBLEM ─── -->
+                    <h3 class="subsection-h3">The Problem with Numerical Differentiation</h3>
+                    <p>
+                        The state vector includes ẋ and &theta;&#775;, which are not directly measured. In the first version of the controller, I estimated velocities by numerically differentiating the encoder position signals. Numerical differentiation amplifies high-frequency noise because each derivative computation effectively multiplies the noise spectrum by frequency. The resulting velocity signals contained large spikes that degraded control quality and caused jitter at higher reference frequencies.
+                    </p>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-diff-velocity.png" alt="Cart velocity obtained by numerical differentiation at 5 rad/s">
+                            <p class="figure-caption">Cart velocity obtained by differentiating the cart position encoder at 5 rad/s. The noise is severe.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/pendulum-diff-angvel.png" alt="Pendulum angular velocity obtained by numerical differentiation at 5 rad/s">
+                            <p class="figure-caption">Pendulum angular velocity from differentiation. The high-frequency peaks reach amplitudes far exceeding the actual motion, making the signal nearly unusable.</p>
+                        </div>
+                    </div>
+
+                    <!-- ─── SECTION 6: OBSERVER DESIGN ─── -->
+                    <h3 class="subsection-h3">Luenberger Observer Design</h3>
+                    <p>
+                        The solution is a Luenberger observer: a parallel model of the system that runs in software alongside the real plant, receiving the same input u and the measured outputs y, and correcting its state estimate x&#770; based on the difference between predicted and measured outputs. The observer dynamics are:
+                    </p>
+                    <div class="equation-block">
+                        x&#770;&#775; = Ax&#770; + Bu + L(y &minus; Cx&#770;)
+                    </div>
+                    <p>
+                        The matrix L is a 4&times;2 observer gain matrix chosen so that the eigenvalues of (A &minus; LC) are stable and converge faster than the closed-loop plant poles. I placed the observer eigenvalues at &minus;10 &plusmn; 15j and &minus;12 &plusmn; 17j, using MATLAB's <code>place()</code> command on the transposed system (place(A', C', poles)') to compute L:
+                    </p>
+                    <div class="equation-block">
+                        L = <br>
+                        &nbsp;&nbsp;[14.898 &nbsp;&nbsp;&minus;2.248]<br>
+                        &nbsp;&nbsp;[240.608 &nbsp; 7.676]<br>
+                        &nbsp;&nbsp;[15.343 &nbsp; 22.290]<br>
+                        &nbsp;&nbsp;[179.300 &nbsp; 403.180]
+                    </div>
+                    <p>
+                        Because the observer poles lie further into the left half-plane than the controller poles, the observer converges to the actual state faster than the plant responds to control inputs. The observer provides smooth, noise-filtered estimates of all four states, including the velocities that were previously contaminated by differentiation noise.
+                    </p>
+
+                    <!-- Simulink observer models -->
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-simulink-overall.png" alt="Overall Simulink model with controller, plant, and observer">
+                            <p class="figure-caption">Overall Simulink model showing the controller, plant, and observer running in closed loop.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-simulink-block.png" alt="Simulink observer block internals">
+                            <p class="figure-caption">The observer block: it receives u and y, integrates the model forward, and feeds back L times the output error to correct the state estimate.</p>
+                        </div>
+                    </div>
+
+                    <!-- ─── SECTION 7: SIMULATION VERIFICATION ─── -->
+                    <h3 class="subsection-h3">Observer Verification in Simulation</h3>
+                    <p>
+                        I simulated the observer starting from a mismatched initial condition (10 cm position offset, 5-degree angle offset in the plant, zero initial estimate). The observer estimate converged to the true plant state within roughly half a second across all four state variables:
+                    </p>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-sim-cart-pos.png" alt="Simulated cart position: actual vs observer estimate">
+                            <p class="figure-caption">Cart position: actual (blue) vs observer estimate (orange). The observer converges quickly from the initial 10 cm offset.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-sim-cart-vel.png" alt="Simulated cart velocity: actual vs observer estimate">
+                            <p class="figure-caption">Cart velocity: the observer provides a smooth estimate without the noise spikes from numerical differentiation.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-sim-pendulum-angle.png" alt="Simulated pendulum angle: actual vs observer estimate">
+                            <p class="figure-caption">Pendulum angle: actual vs observer estimate. Error reduces to near zero before 0.5 seconds.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-sim-pendulum-angvel.png" alt="Simulated pendulum angular velocity: actual vs observer estimate">
+                            <p class="figure-caption">Pendulum angular velocity: the observer provides the smoothest estimate of the most noise-sensitive state.</p>
+                        </div>
+                    </div>
+                    <p>
+                        Plotting the estimation error e = x&#770; &minus; x confirms rapid convergence:
+                    </p>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-error-pos.png" alt="Observer position estimation error over time">
+                            <p class="figure-caption">Position estimation error decays to near zero within half a second.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-error-vel.png" alt="Observer velocity estimation error over time">
+                            <p class="figure-caption">Velocity estimation error converges at the same rate as position error.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-error-angle.png" alt="Observer angle estimation error over time">
+                            <p class="figure-caption">Angle estimation error. All four errors converge together, controlled by the observer eigenvalue placement.</p>
+                        </div>
+                    </div>
+
+                    <!-- ─── SECTION 8: HARDWARE COMPARISON ─── -->
+                    <h3 class="subsection-h3">Hardware: Observer vs Derivative Control</h3>
+                    <p>
+                        I ran both controllers on the physical hardware and compared their behavior. The observer-based controller produced visibly smoother cart and pendulum motion, especially during and after perturbations. When a perturbation was applied, the differentiation-based controller (Lab 6a) showed jagged, high-frequency activity in both cart position and pendulum angle. The observer-based controller responded more cleanly, with the estimate absorbing the noise before it reached the feedback path.
+                    </p>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-hw-cart-pos.png" alt="Hardware: estimated vs actual cart position from observer">
+                            <p class="figure-caption">Hardware: observer estimate of cart position (orange) overlaid on the measured position (blue). The estimate closely tracks the actual signal.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-hw-pendulum-angle.png" alt="Hardware: estimated vs actual pendulum angle from observer">
+                            <p class="figure-caption">Hardware: observer estimate of pendulum angle vs measured angle. The observer provides a clean estimate even when the sensor signal carries encoder quantization noise.</p>
+                        </div>
+                    </div>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-compare-perturb-cart.png" alt="Cart position: Lab 6a vs Lab 6b under perturbation">
+                            <p class="figure-caption">Cart position under perturbation: derivative-based controller (Lab 6a) vs observer-based controller (Lab 6b). The observer controller responds more smoothly.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-compare-perturb-pendulum.png" alt="Pendulum angle: Lab 6a vs Lab 6b under perturbation">
+                            <p class="figure-caption">Pendulum angle under perturbation. The observer-based response is less jagged after the perturbation.</p>
+                        </div>
+                    </div>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-compare-sine-cart.png" alt="Cart position tracking a 1 rad/s sine wave: derivative vs observer controller">
+                            <p class="figure-caption">Cart position tracking a 1 rad/s sinusoidal reference: derivative controller (Lab 6a) vs observer controller (Lab 6b). The observer version tracks more smoothly.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-compare-sine-pendulum.png" alt="Pendulum angle during 1 rad/s sine tracking: derivative vs observer controller">
+                            <p class="figure-caption">Pendulum angle during sine tracking. The observer controller keeps the pendulum angle tighter around zero while the cart moves.</p>
+                        </div>
+                    </div>
+
+                    <!-- Velocity comparison -->
+                    <p>
+                        The velocity comparison most clearly shows the advantage of the observer. Numerical differentiation introduced large noise peaks in the cart velocity and angular velocity signals. The observer replaced these with smooth, physically plausible estimates that the controller could act on without amplifying noise into the feedback loop:
+                    </p>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-vel-compare-cart.png" alt="Cart velocity: numerical differentiation vs observer estimate">
+                            <p class="figure-caption">Cart velocity: derivative (Lab 6a, noisy) vs observer estimate (Lab 6b, smooth). The derivative version amplifies sensor noise into large spikes.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-vel-compare-pendulum.png" alt="Pendulum angular velocity: numerical differentiation vs observer estimate">
+                            <p class="figure-caption">Pendulum angular velocity: the derivative signal has large high-frequency peaks that the observer entirely eliminates.</p>
+                        </div>
+                    </div>
+
+                    <!-- ─── SECTION 9: NOISE ANALYSIS ─── -->
+                    <h3 class="subsection-h3">Noise Robustness Analysis</h3>
+                    <p>
+                        To quantify the observer's noise rejection, I ran an experiment with added measurement noise and compared three signals: the clean position, the noisy sensor output, and the observer estimate. I computed position deviation and noise power as performance metrics.
+                    </p>
+                    <div class="stat-row">
+                        <div class="stat-pill">
+                            <span class="pill-number">0.0317</span>
+                            <span class="pill-label">position deviation (baseline)</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="pill-number">9.33 &times; 10<sup>&minus;6</sup></span>
+                            <span class="pill-label">noise power (baseline)</span>
+                        </div>
+                    </div>
+                    <div class="figure-grid" style="grid-template-columns: 1fr;">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-noise-tracking.png" alt="Observer tracking: actual and estimated cart position and pendulum angle over time">
+                            <p class="figure-caption">Observer noise test: actual and estimated cart position (top) and pendulum angle (bottom) plotted together. The observer estimate closely tracks the actual state despite sensor noise.</p>
+                        </div>
+                    </div>
+                    <p>
+                        When I injected artificial noise into the sensor signals, the observer estimate remained close to the true state while the raw sensor output showed significant jitter. The position deviation and noise power metrics confirmed the observer was filtering effectively. I also explored three alternative pole placements to understand the tradeoffs between convergence speed and noise sensitivity. Poles placed closer to the real axis (smaller imaginary component) resulted in lower noise power while maintaining similar position deviation, suggesting that the pole imaginary parts primarily drive transient oscillation rather than steady-state noise rejection.
+                    </p>
+                    <div class="figure-grid">
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-noise-cart.png" alt="Cart position: without noise, with noise, and observer estimate">
+                            <p class="figure-caption">Cart position: clean signal (blue), noisy measurement (black), and observer estimate (red). The observer tracks the clean signal rather than the noisy one.</p>
+                        </div>
+                        <div class="inline-figure">
+                            <img src="assets/controls%20coursework/observer-noise-pendulum.png" alt="Pendulum angle: without noise, with noise, and observer estimate">
+                            <p class="figure-caption">Pendulum angle under added noise. Angular noise power is much higher (0.84) than cart noise power (0.012), but the observer handles both.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </details>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Jobanpreet Mutti</p>
+    </footer>
+</body>
+</html>
