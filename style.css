@@ -389,6 +389,12 @@ a {
     max-height: 48rem;
 }
 
+.project-image-contain {
+    object-fit: contain;
+    padding: 1rem;
+    background: #f0f4f7;
+}
+
 .project-details p + p {
     margin-top: 0.85rem;
 }
