@@ -40,7 +40,7 @@
         <section class="feature-panel">
             <div class="feature-visual-card">
                 <img class="feature-image"
-                     src="ME%20136/ME136_Lab_5/ME136Lab5HoverScreenshot.png"
+                     src="assets/flight-controls/hover-screenshot.png"
                      alt="Quadrotor hovering in simulation">
             </div>
             <div class="feature-text-card">
@@ -140,24 +140,24 @@
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_1/me136lab1q3aMotorsOff.png"
+                    <img src="assets/flight-controls/gyro-motors-off.png"
                          alt="Gyroscope output with motors off">
                     <figcaption>All three gyroscope axes with motors off. Standard deviation sits at 0.0010 rad/s — a clean baseline.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_1/me136lab1q3aMotorsOn.png"
+                    <img src="assets/flight-controls/gyro-motors-on.png"
                          alt="Gyroscope output with motors on">
                     <figcaption>Same axes with motors running. The X and Y noise floor jumps ~23×, making vibration rejection a non-negotiable design requirement for the estimator.</figcaption>
                 </figure>
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_1/me136lab1q3cRateGyroscope.png"
+                    <img src="assets/flight-controls/gyro-manual-rotation.png"
                          alt="Gyroscope response during deliberate vehicle rotation">
                     <figcaption>Rate gyroscope during deliberate manual rotation — used to verify axis sign conventions and maximum expected angular rates before building the estimator.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_1/me136lab1q3cAccelerometer.png"
+                    <img src="assets/flight-controls/accel-manual-rotation.png"
                          alt="Accelerometer response during deliberate vehicle rotation">
                     <figcaption>Accelerometer during the same rotation sequence. Z-axis peaks near 9.82 m/s² confirm correct gravity alignment before any estimation code was written.</figcaption>
                 </figure>
@@ -223,12 +223,12 @@
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_2/2aPNG.png"
+                    <img src="assets/flight-controls/pwm-speed-map.png"
                          alt="Measured rotor speed versus commanded PWM">
                     <figcaption>Commanded PWM vs. measured rotor speed. The linearity validates using a two-parameter regression to define the pwmCommandFromSpeed mapping.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_2/PTVSOMEGA.png"
+                    <img src="assets/flight-controls/thrust-vs-omega.png"
                          alt="Propeller thrust versus angular velocity">
                     <figcaption>Measured thrust vs. rotor speed. The quadratic fit matches the theoretical T = C_T · ρ · Ω² form — confirming the model before embedding it in the control loop.</figcaption>
                 </figure>
@@ -326,19 +326,19 @@
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_3/ME136Lab%203Q3aPic2.png"
+                    <img src="assets/flight-controls/gyro-drift-runs.png"
                          alt="Pitch angle estimate from gyroscope integration only — runs 3, 4, 5">
                     <figcaption>Gyroscope-only pitch integration across five stationary runs. The monotonic drift is pure bias accumulation — the estimator drifts roughly 1° over 5 minutes even with no motion.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_3/extracreditnew.png"
+                    <img src="assets/flight-controls/rho-tuning.png"
                          alt="Complementary filter response for three values of rho">
                     <figcaption>Complementary filter tuning: ρ = 0.005 (blue) drifts; ρ = 0.050 (red) snaps noisily; ρ = 0.010 (green) tracks motion smoothly and returns to zero after rotation.</figcaption>
                 </figure>
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_3/deliverable%205%203%20graphs.png"
+                    <img src="assets/flight-controls/attitude-3d-estimator.png"
                          alt="3D estimator — roll, pitch, and yaw over time">
                     <figcaption>Full 3D estimator output during repeated rotations. All three angles return near zero after motion ends, confirming that the filter is stable and that bias accumulation stays bounded.</figcaption>
                 </figure>
@@ -443,36 +443,36 @@
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_4_Active/MMI.png"
+                    <img src="assets/flight-controls/mixer-matrix.png"
                          alt="Mixer matrix implementation in embedded C++">
                     <figcaption>The mixer matrix implemented directly in embedded C++. The four output commands are computed from total thrust and three moments using the physical arm length L and coupling coefficient k.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_4_Active/4a.png"
+                    <img src="assets/flight-controls/pitch-step-response.png"
                          alt="Estimated and desired pitch step response">
                     <figcaption>Pitch step response with nominal control parameters. The estimated angle (blue) tracks the desired angle (red) with a 1.03 s rise time and no significant overshoot.</figcaption>
                 </figure>
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_4_Active/ME136Lab4Q5a.png"
+                    <img src="assets/flight-controls/unstable-rate-ctrl.png"
                          alt="Purposely unstable rate controller — exponential growth">
                     <figcaption>The purposely unstable rate controller. Angular velocity grows exponentially with a 22 ms doubling time — too fast for any manual intervention, confirming the need for tight feedback design.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_4_Active/ME136Lab4Q6c.png"
+                    <img src="assets/flight-controls/motor-cmds-low-thrust.png"
                          alt="Per-motor command values under reduced thrust">
                     <figcaption>Per-motor force commands with reduced available thrust. The control effort saturates earlier, producing the choppy tracking seen in the angle response at higher accelerations.</figcaption>
                 </figure>
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_4_Active/ME136Lab4Q7a.png"
+                    <img src="assets/flight-controls/accidental-instability.png"
                          alt="Accidentally unstable controller — oscillating pitch">
                     <figcaption>The accidentally unstable controller (time constant 0.025 s). The pitch oscillates in a repeating pattern without converging — over-correction at each loop step prevents the system from settling.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_4_Active/ME136Lab4Q4b.png"
+                    <img src="assets/flight-controls/pitch-step-0-30deg.png"
                          alt="Nominal step response 0 to 30 degrees">
                     <figcaption>Nominal step from 0° to 30°. Clean rise, minimal overshoot, and controlled settling — the benchmark behavior that later phases needed to preserve when hover loops were added on top.</figcaption>
                 </figure>
@@ -543,36 +543,36 @@
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q3bi.png"
+                    <img src="assets/flight-controls/height-test-attitude.png"
                          alt="Estimated roll and pitch while testing height estimator">
                     <figcaption>Estimated roll and pitch during the height estimator test. The vehicle was held at 0.5 m and manually tilted ±30°, providing the attitude inputs needed to validate the cos(φ)cos(θ) height correction.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q3bii.png"
+                    <img src="assets/flight-controls/height-test-vvel.png"
                          alt="Estimated vertical velocity versus time">
                     <figcaption>Estimated vertical velocity during the height test. The estimator correctly shows near-zero velocity during the hold phase and a smooth transition to zero when returned to ground.</figcaption>
                 </figure>
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q3biii.png"
+                    <img src="assets/flight-controls/height-test-estimate.png"
                          alt="Estimated height and raw range sensor versus time">
                     <figcaption>Estimated height (corrected) vs. raw range sensor output. The attitude-corrected estimate tracks the true 0.5 m hold more accurately than the uncorrected sensor reading, especially during the ±30° tilt phases.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q4bi.png"
+                    <img src="assets/flight-controls/horiz-test-gyro.png"
                          alt="Pitch rate and roll rate during horizontal estimator test">
                     <figcaption>Pitch and roll rates during the horizontal velocity test. These gyroscope signals are the compensation term subtracted from the optical flow before it is converted to a velocity estimate.</figcaption>
                 </figure>
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q4bii.jpg"
+                    <img src="assets/flight-controls/optical-flow-raw.jpg"
                          alt="Raw optical flow sensor output versus time">
                     <figcaption>Raw optical flow sensor data. The signal contains both the translational motion (walking the vehicle forward and left) and significant rotational contamination that must be removed by gyro compensation.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q4biii.png"
+                    <img src="assets/flight-controls/horiz-velocity-estimate.png"
                          alt="Estimated horizontal velocity after gyro compensation">
                     <figcaption>Estimated horizontal velocity after gyro compensation and height scaling. The translational segments (forward walk, lateral walk) are now cleanly isolated from the rotational motion artifacts.</figcaption>
                 </figure>
@@ -685,80 +685,42 @@
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q5bi.png"
+                    <img src="assets/flight-controls/hover-angles.png"
                          alt="Estimated and desired angles during hover">
                     <figcaption>Estimated vs. desired roll, pitch, and yaw during hover. The attitude controller is tracking the outer-loop angle commands from the horizontal velocity damper — the inner and outer loops are coupled and working together.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q5bii.png"
+                    <img src="assets/flight-controls/hover-velocity.png"
                          alt="Estimated horizontal velocities during hover">
                     <figcaption>Estimated horizontal velocity during hover. The velocity is not held at exactly zero — the outer loop damps it toward zero, but real noise and delay mean it oscillates around zero rather than pinning to it.</figcaption>
                 </figure>
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q5biii.png"
+                    <img src="assets/flight-controls/hover-height.png"
                          alt="Estimated and desired height during hover">
                     <figcaption>Height tracking during hover. The second-order altitude controller holds the vehicle within a band around the target height, with the estimator providing the smoothed altitude feedback the controller needs.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/ME136_Lab5_Q5biiii.png"
+                    <img src="assets/flight-controls/hover-motor-force.png"
                          alt="Total motor force during hover">
                     <figcaption>Total motor force during hover flight. The force oscillates around the hover thrust needed to counteract gravity, rising when altitude correction is needed and falling during descent phases.</figcaption>
                 </figure>
             </div>
             <div class="figure-grid">
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/roll1.png"
+                    <img src="assets/flight-controls/roll-tuning-before.png"
                          alt="Roll versus time — early tuning iteration">
                     <figcaption>Roll tracking in an early tuning iteration. The aggressive oscillation shows the over-correction behavior that led to the horizontal velocity mixer weight being increased from the default.</figcaption>
                 </figure>
                 <figure class="inline-figure">
-                    <img src="ME%20136/ME136_Lab_5/roll2.png"
+                    <img src="assets/flight-controls/roll-tuning-after.png"
                          alt="Roll versus time — after tuning">
                     <figcaption>Roll tracking after tuning. The same controller with the revised mixer weight shows dramatically reduced oscillation amplitude — the difference between 5 seconds and 30 seconds of stable flight.</figcaption>
                 </figure>
             </div>
         </section>
 
-
-        <!-- ── Supporting Documents ───────────────── -->
-        <section class="content-section">
-            <div class="section-heading">
-                <p class="eyebrow">Supporting Documents</p>
-                <h2>Embedded flight code and MATLAB analysis</h2>
-            </div>
-            <div class="text-card">
-                <p>
-                    The documents below capture the full implementation history of this project. The embedded C++
-                    user code files show how the estimator and controller were incrementally built into the main
-                    flight loop. The MATLAB files document the data processing, plotting, and regression analysis
-                    used to characterize actuators, validate estimators, and tune the hover controller.
-                </p>
-                <h3 class="subsection-title">Embedded C++ Flight Loop Code</h3>
-                <div class="resource-links">
-                    <a href="ME%20136/ME136_Lab_1/usercode.pdf" target="_blank" rel="noreferrer">Phase 1 — Motor commands &amp; IMU logging</a>
-                    <a href="ME%20136/ME136_Lab_2/Lab2Usercode.pdf" target="_blank" rel="noreferrer">Phase 2 — PWM-to-speed &amp; thrust mapping</a>
-                    <a href="ME%20136/ME136_Lab_3/Lab3UserCode.pdf" target="_blank" rel="noreferrer">Phase 3 — Complementary filter estimator</a>
-                    <a href="ME%20136/ME136_Lab_4_Active/Lab4UserCode.pdf" target="_blank" rel="noreferrer">Phase 4 — Attitude controller &amp; mixer</a>
-                    <a href="ME%20136/ME136_Lab_5/ME136_Lab5_UserCode.pdf" target="_blank" rel="noreferrer">Phase 5 &amp; 6 — Full hover stack</a>
-                </div>
-                <h3 class="subsection-title">Utility Code (Shared Functions)</h3>
-                <div class="resource-links">
-                    <a href="ME%20136/ME136_Lab_2/Lab2UtilityCode.pdf" target="_blank" rel="noreferrer">Phase 2 utility functions</a>
-                    <a href="ME%20136/ME136_Lab_3/Lab3UtilityCode.pdf" target="_blank" rel="noreferrer">Phase 3 utility functions</a>
-                    <a href="ME%20136/ME136_Lab_4_Active/Lab4UtilityCode.pdf" target="_blank" rel="noreferrer">Phase 4 utility functions</a>
-                    <a href="ME%20136/ME136_Lab_5/Lab4UtilityCode.pdf" target="_blank" rel="noreferrer">Phase 5/6 utility functions</a>
-                </div>
-                <h3 class="subsection-title">MATLAB Analysis &amp; Telemetry Processing</h3>
-                <div class="resource-links">
-                    <a href="ME%20136/ME136_Lab_2/me136lab2matlabcode.pdf" target="_blank" rel="noreferrer">Phase 2 — Regression &amp; thrust fitting</a>
-                    <a href="ME%20136/ME136_Lab_3/Lab3.pdf" target="_blank" rel="noreferrer">Phase 3 — Estimator validation plots</a>
-                    <a href="ME%20136/ME136_Lab_4_Active/Lab4MatlabCode.pdf" target="_blank" rel="noreferrer">Phase 4 — Step response &amp; stability analysis</a>
-                    <a href="ME%20136/ME136_Lab_5/Lab5MatlabCode.pdf" target="_blank" rel="noreferrer">Phase 5 &amp; 6 — State estimation &amp; hover analysis</a>
-                </div>
-            </div>
-        </section>
 
     </main>
 
