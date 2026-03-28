@@ -31,6 +31,42 @@
         </section>
 
         <section class="portfolio-grid">
+
+            <a class="project-card project-link project-card-expand" href="https://drive.google.com/file/d/1XoF7mYHcFBwHeTWI1AUr1x_V7Nx3rNLj/view?usp=drive_link" target="_blank" rel="noreferrer">
+                <img class="project-image" src="bot.png" alt="Project preview for youBot mobile manipulation control">
+                <div class="project-content">
+                    <h2>youBot Mobile Manipulation Control</h2>
+                    <div class="project-details">
+                        <p>We developed a control and simulation pipeline for the youBot to autonomously pick up a cube and move it to a target pose using coordinated chassis-and-arm motion.</p>
+                        <p>The project separated the task into state prediction, trajectory generation, and feedback control. We used ScrewTrajectory to generate smooth eight-segment reference motion, then implemented a feedforward plus feedback controller that combined proportional and integral error correction to track the desired end-effector path.</p>
+                        <p>To convert commanded end-effector twists into robot motion, we used the pseudoinverse of the mobile manipulator Jacobian to distribute responsibility across the four Mecanum wheels and five arm joints. We also enforced actuator velocity limits in the simulation through first-order Euler integration and command saturation so the system behaved more like a physically realizable robot instead of an unconstrained mathematical model.</p>
+                        <p>We evaluated best-case, overshoot, and new-task scenarios, compared tracking behavior through Xerr plots, and analyzed how controller gains, singularity proximity, and joint speed limits affected performance. The linked video shows the best-case execution of the task.</p>
+                    </div>
+                </div>
+            </a>
+
+            <a class="project-card project-link project-card-expand" href="flight-controls.html">
+                <img class="project-image" src="assets/flight-controls/flight-controlsblockimage.PNG" alt="Project preview for flight controls and state estimation work">
+                <div class="project-content">
+                    <h2>Flight Controls and State Estimation</h2>
+                    <div class="project-details">
+                        <p>We built a quadrotor controls stack from the ground up, progressing from direct motor commands and IMU inspection into actuator calibration, complementary-filter attitude estimation, control allocation, and stable hover logic.</p>
+                        <p>The linked page turns that work into one long-form technical project story, including the underlying control and estimation theory, representative plots, and the embedded code and MATLAB analysis used to validate the system.</p>
+                    </div>
+                </div>
+            </a>
+
+            <a class="project-card project-link project-card-expand" href="https://drive.google.com/file/d/1XkH1dzVJvGLIwpKd3xzEIAUK-oDxOjrA/view?usp=sharing" target="_blank" rel="noreferrer">
+                <img class="project-image" src="assets/robot%20arm/robotarm.webp" alt="Project preview for UR3e inverse kinematics">
+                <div class="project-content">
+                    <h2>UR3e Inverse Kinematics and Task Planning</h2>
+                    <div class="project-details">
+                        <p>We programmed a UR3e robot arm to autonomously assemble a multi-part figure by solving inverse kinematics for every waypoint in the task sequence. The IK solver was built from scratch using an iterative Newton's method approach on the space Jacobian, rather than a closed-form solution, with screw axes and SE(3) coordinate transforms defining the robot's geometry.</p>
+                        <p>Waypoints were defined as full SE(3) target poses with gripper state, and intermediate staging waypoints at a fixed Z height were introduced to guarantee collision-free transitions between pick and place locations. Every waypoint converged within 20 iterations, and the full sequence was uploaded to the physical robot via a Python script and executed successfully.</p>
+                    </div>
+                </div>
+            </a>
+
             <a class="project-card project-link project-card-expand" href="https://youtube.com/playlist?list=PLUkwIOCThVas6LDGFrjdmkLAr4umysZr8&si=WxuTpxrSq5qoFKWC" target="_blank" rel="noreferrer">
                 <img class="project-image" src="full_car.jpeg" alt="Project preview for RoboJeep">
                 <div class="project-content">
@@ -43,33 +79,11 @@
                 </div>
             </a>
 
-            <a class="project-card project-link project-card-expand" href="assets/experiments%20and%20measurements%20/poster.pdf" target="_blank" rel="noreferrer">
-                <img class="project-image" src="assets/experiments%20and%20measurements%20/emblockphoto.webp" alt="Project preview for cancellous bone implant research">
-                <div class="project-content">
-                    <h2>Cancellous Bone Implant Research</h2>
-                    <div class="project-details">
-                        <p>We investigated whether 3D-printed porous geometries could better replicate the mechanical behavior and permeability of natural cancellous bone, combining Instron tensile and compression testing with a custom porosity flow study across gyroid and 3D cross infill patterns at two densities.</p>
-                        <p>The linked page covers the full research arc: the problem with conventional implants, our specimen design, stress-strain theory, all test results with elastic moduli across all four configurations, and what the findings suggest for future implant material selection.</p>
-                    </div>
-                </div>
-            </a>
-
             <a class="project-card project-link" href="#">
                 <img class="project-image" src="Pasted%20image.png" alt="Project preview for Mini Autonomous Car">
                 <div class="project-content">
                     <h2>Mini Autonomous Car</h2>
                     <p>Integrated an OAK-D Lite camera and GNSS receiver into a perception pipeline using YOLOv8 models and PID position control.</p>
-                </div>
-            </a>
-
-            <a class="project-card project-link project-card-expand" href="flight-controls.html">
-                <img class="project-image" src="assets/flight-controls/flight-controlsblockimage.PNG" alt="Project preview for flight controls and state estimation work">
-                <div class="project-content">
-                    <h2>Flight Controls and State Estimation</h2>
-                    <div class="project-details">
-                        <p>I built a quadrotor controls stack from the ground up, progressing from direct motor commands and IMU inspection into actuator calibration, complementary-filter attitude estimation, control allocation, and stable hover logic.</p>
-                        <p>The linked page turns that work into one long-form technical project story, including the underlying control and estimation theory, representative plots, and the embedded code and MATLAB analysis used to validate the system.</p>
-                    </div>
                 </div>
             </a>
 
@@ -85,15 +99,13 @@
                 </div>
             </a>
 
-            <a class="project-card project-link project-card-expand" href="https://drive.google.com/file/d/1XoF7mYHcFBwHeTWI1AUr1x_V7Nx3rNLj/view?usp=drive_link" target="_blank" rel="noreferrer">
-                <img class="project-image" src="bot.png" alt="Project preview for youBot mobile manipulation control">
+            <a class="project-card project-link project-card-expand" href="assets/experiments%20and%20measurements%20/poster.pdf" target="_blank" rel="noreferrer">
+                <img class="project-image" src="assets/experiments%20and%20measurements%20/emblockphoto.webp" alt="Project preview for Instron mechanical testing">
                 <div class="project-content">
-                    <h2>youBot Mobile Manipulation Control</h2>
+                    <h2>Instron Mechanical Testing of 3D-Printed Bone Structures</h2>
                     <div class="project-details">
-                        <p>For my MAE 204 final project, I developed a control and simulation pipeline for the youBot to autonomously pick up a cube and move it to a target pose using coordinated chassis-and-arm motion.</p>
-                        <p>The project separated the task into state prediction, trajectory generation, and feedback control. I used ScrewTrajectory to generate smooth eight-segment reference motion, then implemented a feedforward plus feedback controller that combined proportional and integral error correction to track the desired end-effector path.</p>
-                        <p>To convert commanded end-effector twists into robot motion, I used the pseudoinverse of the mobile manipulator Jacobian to distribute responsibility across the four Mecanum wheels and five arm joints. I also enforced actuator velocity limits in the simulation through first-order Euler integration and command saturation so the system behaved more like a physically realizable robot instead of an unconstrained mathematical model.</p>
-                        <p>I evaluated best-case, overshoot, and new-task scenarios, compared tracking behavior through Xerr plots, and analyzed how controller gains, singularity proximity, and joint speed limits affected performance. The linked video shows the best-case execution of the task.</p>
+                        <p>We used an Instron testing machine to characterize the tensile and compressive properties of 3D-printed porous PLA specimens across two infill geometries, gyroid and 3D cross, at 25% and 35% infill density, extracting elastic moduli from stress-strain curves generated in MATLAB.</p>
+                        <p>Beyond mechanical testing, we designed a gravity-fed water flow experiment to rank the permeability of each geometry, measuring the time for 80% of a 100 mL column to pass through each specimen. The gyroid outperformed the 3D cross in every category: higher tensile modulus, higher compressive modulus, and substantially faster fluid flow, with the permeability advantage reaching nearly 6x at equivalent density.</p>
                     </div>
                 </div>
             </a>
@@ -105,6 +117,7 @@
                     <p>Designed full-state feedback controllers for an inverted pendulum and implemented a Luenberger observer to estimate unmeasured states.</p>
                 </div>
             </a>
+
         </section>
     </main>
 
