@@ -26,12 +26,12 @@
         <!-- ── Hero ───────────────────────────────── -->
         <section class="page-intro">
             <p class="eyebrow">Flight Controls &amp; State Estimation</p>
-            <h1>Building a quadrotor flight stack from scratch — actuators to stable hover.</h1>
+            <h1>Building a quadrotor flight stack from scratch, actuators to stable hover.</h1>
             <p>
                 Starting from nothing but raw PWM motor commands and IMU streams, I built every layer of a
                 real flight-control pipeline: actuator characterization, thrust modeling, gyroscope bias
                 calibration, complementary-filter attitude estimation, cascaded attitude control, control
-                allocation through a mixer matrix, altitude and optical-flow state estimation, and finally
+                allocation through a mixer matrix, altitude and optical flow state estimation, and finally
                 a full closed-loop hover controller. Every number cited here came from real experimental
                 data collected and analyzed in MATLAB.
             </p>
@@ -47,9 +47,9 @@
                 <p class="card-label">End Result</p>
                 <h2>A tuned hover controller that kept the vehicle airborne for 30 seconds.</h2>
                 <p>
-                    Out-of-the-box, the vehicle lasted around 5 seconds before losing control and hitting a wall.
+                    "Out of the box", the vehicle lasted around 5 seconds before losing control and hitting a wall.
                     After five phases of building, tuning, and validating the estimation and control stack,
-                    the same vehicle averaged 30 seconds of stable hover flight — a 6× improvement — purely
+                    the same vehicle averaged 30 seconds of stable hover flight, a 6× improvement, purely
                     from understanding and iterating on the underlying physics.
                 </p>
                 <p>
@@ -86,7 +86,7 @@
                     Before any estimation or control logic could be written, I needed to understand the sensor
                     environment the vehicle would be operating in. The inertial measurement unit provides rate
                     gyroscope and accelerometer data, but that raw data is not the same thing as angular velocity
-                    or linear acceleration. It contains bias, noise, and motor-induced vibration that have to be
+                    or linear acceleration. It contains bias, noise, and motor induced vibration that have to be
                     understood before they can be used.
                 </p>
 
@@ -98,11 +98,11 @@
                 <div class="stat-row">
                     <div class="stat-pill">
                         <span class="pill-number">0.0010 rad/s</span>
-                        <span class="pill-label">gyro STD — motors off</span>
+                        <span class="pill-label">gyro STD: motors off</span>
                     </div>
                     <div class="stat-pill">
                         <span class="pill-number">0.0235 rad/s</span>
-                        <span class="pill-label">gyro STD — motors on (X axis)</span>
+                        <span class="pill-label">gyro STD: motors on (X axis)</span>
                     </div>
                     <div class="stat-pill">
                         <span class="pill-number">~23×</span>
@@ -113,7 +113,7 @@
                     The X and Y axes saw roughly 23× higher noise when motors were running; the Z axis was less
                     affected (0.0054 rad/s), likely because motor vibration couples more strongly into the lateral
                     axes than into the yaw axis. Critically, despite that noise, all three gyroscope means remained
-                    close to zero while the vehicle was stationary — confirming that vibration adds zero-mean
+                    close to zero while the vehicle was stationary, confirming that vibration adds zero-mean
                     high-frequency noise but does not introduce a persistent bias offset in a static condition.
                     This confirmed that gyroscope bias calibration could be done from a single stationary snapshot.
                 </p>
@@ -123,7 +123,7 @@
                     I also manually rotated the vehicle through known motions to verify axis sign conventions and
                     to develop intuition for sensor scaling. Rotating sharply about the Y axis produced a gyroscope
                     peak of −6.982 deg/s in that channel and corresponding accelerometer motion, while the
-                    accelerometer Z axis measured up to 9.8196 m/s² under gravity — matching the expected 1g.
+                    accelerometer Z axis measured up to 9.8196 m/s² under gravity, matching the expected 1g.
                     These checks are mundane but essential: axis sign errors and scale factor assumptions are
                     responsible for some of the most confusing control bugs because they manifest as the vehicle
                     doing the exact opposite of what the controller commands.
@@ -132,7 +132,7 @@
                 <h3 class="subsection-h3">Noise simulation</h3>
                 <p>
                     The simulation environment had a noise injection mode that could be toggled on and off. With
-                    noise disabled, gyroscope and accelerometer signals zeroed out entirely — confirming that the
+                    noise disabled, gyroscope and accelerometer signals zeroed out entirely, confirming that the
                     simulator was producing synthetic Gaussian noise rather than real sensor physics. With noise
                     re-enabled, the full stochastic character returned. This gave me confidence that tuning
                     parameters found in simulation would transfer meaningfully to a real sensor environment.
@@ -142,7 +142,7 @@
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/gyro-motors-off.png"
                          alt="Gyroscope output with motors off">
-                    <figcaption>All three gyroscope axes with motors off. Standard deviation sits at 0.0010 rad/s — a clean baseline.</figcaption>
+                    <figcaption>All three gyroscope axes with motors off. Standard deviation sits at 0.0010 rad/s, a clean baseline.</figcaption>
                 </figure>
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/gyro-motors-on.png"
@@ -154,7 +154,7 @@
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/gyro-manual-rotation.png"
                          alt="Gyroscope response during deliberate vehicle rotation">
-                    <figcaption>Rate gyroscope during deliberate manual rotation — used to verify axis sign conventions and maximum expected angular rates before building the estimator.</figcaption>
+                    <figcaption>Rate gyroscope during deliberate manual rotation, used to verify axis sign conventions and maximum expected angular rates before building the estimator.</figcaption>
                 </figure>
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/accel-manual-rotation.png"
@@ -173,12 +173,12 @@
             </div>
             <div class="text-card story-card">
                 <p>
-                    A flight controller has to express its outputs in physically meaningful terms — not raw PWM
+                    A flight controller has to express its outputs in physically meaningful terms, not raw PWM
                     values. That required two identification steps: a PWM-to-speed map and a speed-to-thrust map.
                     Together they let the software think in Newtons while hardware deals in motor commands.
                 </p>
 
-                <h3 class="subsection-h3">Step 1 — PWM to angular speed: linear identification</h3>
+                <h3 class="subsection-h3">Step 1 PWM to angular speed: linear identification</h3>
                 <p>
                     I swept the motor through a range of PWM commands and logged the resulting rotor angular speed.
                     The relationship was clearly linear, so I fit it with a least-squares regression:
@@ -192,10 +192,10 @@
                     This gave a clean analytical function <code>pwmCommandFromSpeed(Ω)</code> that the
                     flight loop could call to translate any desired rotor speed into the correct motor
                     command. The small residual error from the linear fit matched what you'd expect from
-                    friction and deadband in the motor driver — acceptable for a flight controller.
+                    friction and deadband in the motor driver, acceptable for a flight controller.
                 </p>
 
-                <h3 class="subsection-h3">Step 2 — Angular speed to thrust: quadratic characterization</h3>
+                <h3 class="subsection-h3">Step 2 Angular speed to thrust: quadratic characterization</h3>
                 <p>
                     To measure thrust, I constrained the vehicle on a pendulum rig so it could only rotate in
                     one axis. Starting from the known gravitational acceleration (9.81 m/s² in the Y direction
@@ -230,7 +230,7 @@
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/thrust-vs-omega.png"
                          alt="Propeller thrust versus angular velocity">
-                    <figcaption>Measured thrust vs. rotor speed. The quadratic fit matches the theoretical T = C_T · ρ · Ω² form — confirming the model before embedding it in the control loop.</figcaption>
+                    <figcaption>Measured thrust vs. rotor speed. The quadratic fit matches the theoretical T = C_T · ρ · Ω² form, confirming the model before embedding it in the control loop.</figcaption>
                 </figure>
             </div>
         </section>
@@ -296,19 +296,19 @@
                 <div class="stat-row">
                     <div class="stat-pill">
                         <span class="pill-number">ρ = 0.005</span>
-                        <span class="pill-label">too low — drift accumulates unchecked</span>
+                        <span class="pill-label">too low, drift accumulates unchecked</span>
                     </div>
                     <div class="stat-pill">
                         <span class="pill-number">ρ = 0.050</span>
-                        <span class="pill-label">too high — estimate follows noise like a step function</span>
+                        <span class="pill-label">too high, estimate follows noise like a step function</span>
                     </div>
                     <div class="stat-pill">
                         <span class="pill-number">ρ = 0.010</span>
-                        <span class="pill-label">chosen — captures motion cleanly without runaway</span>
+                        <span class="pill-label">chosen, captures motion cleanly without runaway</span>
                     </div>
                 </div>
                 <p>
-                    At ρ = 0.01, the estimator responded correctly to a 30° pitch rotation — smoothly
+                    At ρ = 0.01, the estimator responded correctly to a 30° pitch rotation, smoothly
                     tracking the motion and returning near zero after the vehicle was restored to level.
                     There was no runaway drift and no noisy step behavior. The same binary-search discipline
                     was reused in later phases for hover-loop gain selection.
@@ -317,8 +317,8 @@
                 <h3 class="subsection-h3">Extending to 3D: roll, pitch, and yaw</h3>
                 <p>
                     With 1D pitch estimation validated, I extended the estimator to all three attitude angles.
-                    Roll and pitch are both observable from the accelerometer gravity vector. Yaw is not —
-                    gravity has no horizontal component that reveals heading — so the yaw estimate relies
+                    Roll and pitch are both observable from the accelerometer gravity vector. Yaw is not,
+                    gravity has no horizontal component that reveals heading, so the yaw estimate relies
                     entirely on gyroscope integration and is the most susceptible to drift. The full 3D
                     estimator updated roll, pitch, and yaw simultaneously in each loop iteration, applying
                     accelerometer corrections to roll and pitch while integrating yaw from rate only.
@@ -327,8 +327,8 @@
             <div class="figure-grid">
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/gyro-drift-runs.png"
-                         alt="Pitch angle estimate from gyroscope integration only — runs 3, 4, 5">
-                    <figcaption>Gyroscope-only pitch integration across five stationary runs. The monotonic drift is pure bias accumulation — the estimator drifts roughly 1° over 5 minutes even with no motion.</figcaption>
+                         alt="Pitch angle estimate from gyroscope integration only from runs 3, 4, 5">
+                    <figcaption>Gyroscope-only pitch integration across five stationary runs. The monotonic drift is pure bias accumulation, the estimator drifts roughly 1° over 5 minutes even with no motion.</figcaption>
                 </figure>
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/rho-tuning.png"
@@ -339,7 +339,7 @@
             <div class="figure-grid">
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/attitude-3d-estimator.png"
-                         alt="3D estimator — roll, pitch, and yaw over time">
+                         alt="3D estimator roll, pitch, and yaw over time">
                     <figcaption>Full 3D estimator output during repeated rotations. All three angles return near zero after motion ends, confirming that the filter is stable and that bias accumulation stays bounded.</figcaption>
                 </figure>
             </div>
@@ -356,7 +356,7 @@
                 <p>
                     With a working attitude estimator, the next step was using that state to actually
                     control where the vehicle pointed. This phase introduced the full attitude controller
-                    architecture — a cascaded rate-and-angle loop — and the mixer matrix that translated
+                    architecture, a cascaded rate-and-angle loop, and the mixer matrix that translated
                     desired body forces and moments into individual propeller commands.
                 </p>
 
@@ -381,7 +381,7 @@
                     The controller produces four desired outputs: total thrust c<sub>Σ</sub>, and three
                     body-frame moments n<sub>1</sub> (roll), n<sub>2</sub> (pitch), n<sub>3</sub> (yaw).
                     These must be distributed across four propellers. The mixer matrix encodes the physical
-                    geometry of the vehicle — arm length L and yaw coupling coefficient k:
+                    geometry of the vehicle, arm length L and yaw coupling coefficient k:
                 </p>
 
                 <div class="equation-block">
@@ -404,8 +404,8 @@
                 </p>
                 <p>
                     This matrix is the connection between the abstract control outputs (moments) and the
-                    concrete hardware reality (per-motor force commands). Getting it wrong — wrong sign,
-                    wrong arm length, wrong coupling coefficient — causes the vehicle to roll when it should
+                    concrete hardware reality (per-motor force commands). Getting it wrong, wrong sign,
+                    wrong arm length, wrong coupling coefficient, causes the vehicle to roll when it should
                     pitch, yaw when it should hold steady, or any other confusing cross-coupling behavior.
                 </p>
 
@@ -413,7 +413,7 @@
                 <p>
                     With the controller implemented, I tested it with a step input from 0° to 30° pitch.
                     The system rose from 0% to 90% of the final value in <strong>1.03 seconds</strong>.
-                    Using a reduced vertical acceleration of 8 m/s² degraded the response — rise time fell
+                    Using a reduced vertical acceleration of 8 m/s² degraded the response, rise time fell
                     to 0.892 s but the tracking became noticeably choppier, confirming that available
                     control authority directly affects the quality of the trajectory, not just the speed.
                 </p>
@@ -425,7 +425,7 @@
                 <p>
                     <strong>Purposely unstable rate controller:</strong> By setting the rate-loop gain to a
                     destabilizing value, I observed the angular velocity begin to grow exponentially. The
-                    measured doubling time was <strong>22 milliseconds</strong> — far faster than a human
+                    measured doubling time was <strong>22 milliseconds</strong>, far faster than a human
                     reflex loop could recover, and faster than predicted by theory alone. The discrepancy
                     suggested that in simulation, the controller was overcorrecting each update step before
                     the system dynamics could respond, making the instability faster than pure exponential
@@ -456,8 +456,8 @@
             <div class="figure-grid">
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/unstable-rate-ctrl.png"
-                         alt="Purposely unstable rate controller — exponential growth">
-                    <figcaption>The purposely unstable rate controller. Angular velocity grows exponentially with a 22 ms doubling time — too fast for any manual intervention, confirming the need for tight feedback design.</figcaption>
+                         alt="Purposely unstable rate controller">
+                    <figcaption>The purposely unstable rate controller. Angular velocity grows exponentially with a 22 ms doubling time, too fast for any manual intervention, confirming the need for tight feedback design.</figcaption>
                 </figure>
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/motor-cmds-low-thrust.png"
@@ -468,13 +468,13 @@
             <div class="figure-grid">
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/accidental-instability.png"
-                         alt="Accidentally unstable controller — oscillating pitch">
-                    <figcaption>The accidentally unstable controller (time constant 0.025 s). The pitch oscillates in a repeating pattern without converging — over-correction at each loop step prevents the system from settling.</figcaption>
+                         alt="Accidentally unstable controller">
+                    <figcaption>The accidentally unstable controller (time constant 0.025 s). The pitch oscillates in a repeating pattern without converging, over correction at each loop step prevents the system from settling.</figcaption>
                 </figure>
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/pitch-step-0-30deg.png"
                          alt="Nominal step response 0 to 30 degrees">
-                    <figcaption>Nominal step from 0° to 30°. Clean rise, minimal overshoot, and controlled settling — the benchmark behavior that later phases needed to preserve when hover loops were added on top.</figcaption>
+                    <figcaption>Nominal step from 0° to 30°. Clean rise, minimal overshoot, and controlled settling, the benchmark behavior that later phases needed to preserve when hover loops were added on top.</figcaption>
                 </figure>
             </div>
         </section>
@@ -509,7 +509,7 @@
                 </div>
                 <p>
                     Skipping this correction produces a height estimate that artificially decreases when the
-                    vehicle tilts — telling the controller the vehicle is lower than it is, which causes the
+                    vehicle tilts, telling the controller the vehicle is lower than it is, which causes the
                     controller to add thrust, which causes more tilt, which reports even lower height.
                     The attitude correction breaks that coupling.
                 </p>
@@ -521,7 +521,7 @@
 
                 <h3 class="subsection-h3">Horizontal velocity estimation: optical flow with gyro compensation</h3>
                 <p>
-                    Optical flow measures apparent image motion — how pixels shift from frame to frame. But
+                    Optical flow measures apparent image motion, how pixels shift from frame to frame. But
                     image motion has two sources: translation of the vehicle and rotation of the vehicle.
                     If the vehicle pitches forward, the camera sees apparent forward motion even if the
                     vehicle is perfectly still. The rotation contribution must be subtracted out before
@@ -538,7 +538,7 @@
                     The height scaling converts angular pixel rates into linear velocity: a given pixel shift
                     corresponds to a larger physical motion when the vehicle is high than when it is low.
                     Without gyro compensation, the horizontal velocity estimate would spike every time the
-                    vehicle tilted to accelerate — exactly backwards from what a stabilizing controller needs.
+                    vehicle tilted to accelerate, exactly backwards from what a stabilizing controller needs.
                 </p>
             </div>
             <div class="figure-grid">
@@ -590,7 +590,7 @@
                 <p>
                     With working estimators for attitude, height, and horizontal velocity, the final step was
                     closing all the loops simultaneously. The hover controller was not a new system built from
-                    scratch — it was an outer loop layered on top of the attitude controller that was already
+                    scratch, it was an outer loop layered on top of the attitude controller that was already
                     working. This is the natural structure of a flight-control stack: inner loops run fast and
                     handle fast dynamics; outer loops run slower and provide references to the inner loops.
                 </p>
@@ -611,7 +611,7 @@
                 </div>
                 <p>
                     These desired angles then fed directly into the attitude controller from Phase 4.
-                    The outer hover loop essentially said "if you're drifting right, tilt left" — and
+                    The outer hover loop essentially said "if you're drifting right, tilt left", and
                     the inner attitude loop executed that tilt accurately.
                 </p>
 
@@ -631,7 +631,7 @@
                     This desired vertical acceleration became the total thrust command, added to the
                     nominal hover thrust needed to counteract gravity. The total thrust then combined
                     with the attitude moment commands inside the mixer to produce final per-motor force
-                    values — the same mixer from Phase 4.
+                    values, the same mixer from Phase 4.
                 </p>
 
                 <h3 class="subsection-h3">Tuning: binary search on time constants and mixer values</h3>
@@ -676,7 +676,7 @@
                     change alone extended stable flight time substantially.
                 </p>
                 <p>
-                    The final hover averaged 30 seconds of stable flight — compared to 5 seconds with default
+                    The final hover averaged 30 seconds of stable flight, compared to 5 seconds with default
                     parameters. The remaining failure mode was the room size: as the vehicle made large
                     corrective swings, it would occasionally contact a wall before the correction completed.
                     Analysis suggested that larger physical space would allow the same controller to stabilize
@@ -687,12 +687,12 @@
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/hover-angles.png"
                          alt="Estimated and desired angles during hover">
-                    <figcaption>Estimated vs. desired roll, pitch, and yaw during hover. The attitude controller is tracking the outer-loop angle commands from the horizontal velocity damper — the inner and outer loops are coupled and working together.</figcaption>
+                    <figcaption>Estimated vs. desired roll, pitch, and yaw during hover. The attitude controller is tracking the outer-loop angle commands from the horizontal velocity damper, the inner and outer loops are coupled and working together.</figcaption>
                 </figure>
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/hover-velocity.png"
                          alt="Estimated horizontal velocities during hover">
-                    <figcaption>Estimated horizontal velocity during hover. The velocity is not held at exactly zero — the outer loop damps it toward zero, but real noise and delay mean it oscillates around zero rather than pinning to it.</figcaption>
+                    <figcaption>Estimated horizontal velocity during hover. The velocity is not held at exactly zero, the outer loop damps it toward zero, but real noise and delay mean it oscillates around zero rather than pinning to it.</figcaption>
                 </figure>
             </div>
             <div class="figure-grid">
@@ -710,13 +710,13 @@
             <div class="figure-grid">
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/roll-tuning-before.png"
-                         alt="Roll versus time — early tuning iteration">
+                         alt="Roll versus time in early tuning iteration">
                     <figcaption>Roll tracking in an early tuning iteration. The aggressive oscillation shows the over-correction behavior that led to the horizontal velocity mixer weight being increased from the default.</figcaption>
                 </figure>
                 <figure class="inline-figure">
                     <img src="assets/flight-controls/roll-tuning-after.png"
-                         alt="Roll versus time — after tuning">
-                    <figcaption>Roll tracking after tuning. The same controller with the revised mixer weight shows dramatically reduced oscillation amplitude — the difference between 5 seconds and 30 seconds of stable flight.</figcaption>
+                         alt="Roll versus time after tuning">
+                    <figcaption>Roll tracking after tuning. The same controller with the revised mixer weight shows dramatically reduced oscillation amplitude, the difference between 5 seconds and 30 seconds of stable flight.</figcaption>
                 </figure>
             </div>
         </section>
