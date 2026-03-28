@@ -37,10 +37,10 @@
                 <div class="project-content">
                     <h2>youBot Mobile Manipulation Control</h2>
                     <div class="project-details">
-                        <p>We developed a control and simulation pipeline for the youBot to autonomously pick up a cube and move it to a target pose using coordinated chassis-and-arm motion.</p>
-                        <p>The project separated the task into state prediction, trajectory generation, and feedback control. We used ScrewTrajectory to generate smooth eight-segment reference motion, then implemented a feedforward plus feedback controller that combined proportional and integral error correction to track the desired end-effector path.</p>
-                        <p>To convert commanded end-effector twists into robot motion, we used the pseudoinverse of the mobile manipulator Jacobian to distribute responsibility across the four Mecanum wheels and five arm joints. We also enforced actuator velocity limits in the simulation through first-order Euler integration and command saturation so the system behaved more like a physically realizable robot instead of an unconstrained mathematical model.</p>
-                        <p>We evaluated best-case, overshoot, and new-task scenarios, compared tracking behavior through Xerr plots, and analyzed how controller gains, singularity proximity, and joint speed limits affected performance. The linked video shows the best-case execution of the task.</p>
+                        <p>I developed a control and simulation pipeline for the youBot to autonomously pick up a cube and move it to a target pose using coordinated chassis-and-arm motion.</p>
+                        <p>The project separated the task into state prediction, trajectory generation, and feedback control. I used ScrewTrajectory from the Modern Robotics MATLAB library to generate smooth eight-segment reference motion, then implemented a feedforward plus feedback controller that combined proportional and integral error correction to track the desired end-effector path.</p>
+                        <p>To convert commanded end-effector twists into robot motion, I used the pseudoinverse of the mobile manipulator Jacobian to distribute responsibility across the four Mecanum wheels and five arm joints. I also enforced actuator velocity limits in the simulation through first-order Euler integration and command saturation so the system behaved more like a physically realizable robot instead of an unconstrained mathematical model.</p>
+                        <p>I evaluated best-case, overshoot, and new-task scenarios, compared tracking behavior through Xerr plots, and analyzed how controller gains, singularity proximity, and joint speed limits affected performance. The linked video shows the best-case execution of the task.</p>
                     </div>
                 </div>
             </a>
@@ -88,7 +88,7 @@
             </a>
 
             <a class="project-card project-link project-card-expand" href="Laser.pdf" target="_blank" rel="noreferrer">
-                <img class="project-image" src="laser_image.png" alt="Project preview for Laser Lab Research">
+                <img class="project-image" src="assets/laser/laser.webp" alt="Project preview for Laser Lab Research">
                 <div class="project-content">
                     <h2>Laser Systems</h2>
                     <div class="project-details">
