@@ -92,10 +92,10 @@
                     <h2>Controls Coursework</h2>
                     <div class="project-details">
                         <ul>
-                            <li>Designed and deployed a full state feedback controller for a physical inverted pendulum using pole placement, and replaced derivative-based velocity estimates with a Luenberger observer</li>
-                            <li>Designed a discrete-time LQR Electronic Stability Control system using the bicycle model and a combined Pacejka tire model, with individual-wheel braking logic to generate corrective yaw moments</li>
-                            <li>Built and tuned a traction control system to keep tire slip ratio at the peak-force point during hard acceleration</li>
-                            <li>Identified Pacejka tire model parameters from experimental BARC vehicle data at high and low friction conditions using nonlinear least-squares fitting</li>
+                            <li>Designed and deployed a full state feedback controller for a physical inverted pendulum using pole placement</li>
+                            <li>Derived linearized cart-pendulum dynamics from Newton's laws and built a complete state-space model</li>
+                            <li>Designed a Luenberger observer to estimate cart velocity and pendulum angular rate without numerical differentiation</li>
+                            <li>Compared observer-based and differentiation-based controllers on hardware, showing the observer significantly reduced noise amplification in the velocity feedback path</li>
                         </ul>
                     </div>
                 </div>
